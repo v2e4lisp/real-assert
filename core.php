@@ -1,5 +1,4 @@
 <?php
-
 class AssertionException extends Exception {}
 
 function realAssert($stmt, $message="failed.") {
@@ -78,4 +77,20 @@ function assertInstanceOf($obj, $klass, $message=null) {
 
 function assertNotInstanceOf($obj, $klass, $message=null) {
     realAssert(!($obj instanceof $klass), $message);
+}
+
+function assertException($fn, $ex=null, $errmsg=null, $message=null) {
+    $expected = null;
+
+    try {
+        $fn();
+    } catch (Exception $e) {
+        if (is_null($ex) or ($e instanceof $ex)) {
+            $expected = $e;
+        }
+    }
+
+    assertNotNull($expected, $message);
+    realAssert(is_null($errmsg) or ($errmsg == $expected->getMessage()),
+               $message);
 }
